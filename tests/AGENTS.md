@@ -18,6 +18,10 @@ Owns test layout, fixtures, and the local verification expectations for this rep
 - Tests must not need network access, an Ollama account, or `OLLAMA_API_KEY`.
 - Async server introspection uses `asyncio.run(mcp.list_tools())`.
 - File names are `test_*.py`, class names `Test*`, test names `test_*`.
+- Only `pytest` and `pytest-cov` are required; no custom pytest plugins or fixtures are
+  configured, and `pytest` runs with `--strict-config --strict-markers`.
+- Coverage is configured in `pyproject.toml` (`source = ["ollama_search_mcp"]`, branch
+  coverage, `show_missing`, `skip_covered`).
 
 ## Work Guidance
 
@@ -27,11 +31,15 @@ Owns test layout, fixtures, and the local verification expectations for this rep
 - Purge or reload `ollama_search_mcp` modules when testing environment-driven client
   construction, following the existing pattern in `TestOllamaClient`.
 - Shape mocks like real `ollama` responses (`results`, `title`, `content`, `links`).
+- Keep the suite hermetic: no live HTTP, no environment assumptions beyond what a test sets
+  explicitly.
 
 ## Verification
 
-- `pytest` from the repository root with the dev environment installed.
+- `pytest --cov --cov-report=term-missing` from the repository root with the dev environment
+  installed.
 - `ruff check tests/` and `ruff format --check tests/`.
+- The full suite must pass on Python 3.10 and 3.13 (the CI matrix).
 
 ## Child DOX Index
 

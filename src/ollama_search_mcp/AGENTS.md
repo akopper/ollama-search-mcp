@@ -21,8 +21,8 @@ environment variables, and command-line flags.
   - `web_fetch` → `{"title", "content", "links"}`
 - `get_ollama_client()` returns one cached `ollama.Client`, using `OLLAMA_HOST` (default
   `https://ollama.com`) and an `Authorization: Bearer` header when `OLLAMA_API_KEY` is set.
-- `_parse_args()` accepts `--http`, `--sse`, `--host HOST`, and `--port PORT`. The default is
-  stdio; HTTP defaults to `127.0.0.1:8000` with the MCP endpoint at `/mcp`.
+- `_parse_args()` accepts `--stdio`, `--http`, `--sse`, `--host HOST`, and `--port PORT`. The
+  default is stdio; HTTP defaults to `127.0.0.1:8000` with the MCP endpoint at `/mcp`.
 - `main()` is the `ollama-search-mcp` console-script entry point.
 - Use MCP SDK v2 imports: `from mcp.server.mcpserver import MCPServer`. Never reintroduce
   `mcp.server.fastmcp`, which no longer exists in `mcp>=2`.

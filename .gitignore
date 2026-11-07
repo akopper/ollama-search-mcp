@@ -36,9 +36,19 @@ env/
 # Testing
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
 .tox/
 .nox/
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+
+# Build artifacts
+dist/
+build/
 
 # OS
 .DS_Store

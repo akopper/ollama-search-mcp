@@ -10,6 +10,7 @@ Environment Variables:
 
 Command line:
     ollama-search-mcp               # stdio transport (default)
+    ollama-search-mcp --stdio       # stdio transport (explicit)
     ollama-search-mcp --http        # Streamable HTTP transport
     ollama-search-mcp --sse         # SSE transport
     --host HOST                     # HTTP bind address (default: 127.0.0.1)
@@ -93,6 +94,8 @@ def _parse_args(argv: list[str]) -> tuple[Transport, str, int]:
             transport = "streamable-http"
         elif arg == "--sse":
             transport = "sse"
+        elif arg == "--stdio":
+            transport = "stdio"
         elif arg in ("--host", "--port"):
             if i + 1 >= len(argv):
                 raise SystemExit(f"{arg} requires a value")
