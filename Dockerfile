@@ -2,13 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY pyproject.toml README.md .
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
 RUN pip install --no-cache-dir .
 
-COPY src/ ./src/
-
-ENV PYTHONPATH=/app/src
 ENV OLLAMA_API_KEY=""
 ENV OLLAMA_HOST="https://ollama.com"
 
-CMD ["ollama-websearch-mcp", "--http"]
+EXPOSE 8000
+
+CMD ["ollama-search-mcp", "--http", "--host", "0.0.0.0"]

@@ -1,8 +1,8 @@
 {
 	"mcpServers": {
-		"ollama-websearch": {
+		"ollama-search": {
 			"description": "Ollama web search and web fetch MCP server",
-			"command": "ollama-websearch-mcp",
+			"command": "ollama-search-mcp",
 			"env": {
 				"OLLAMA_API_KEY": "$env:OLLAMA_API_KEY"
 			}
