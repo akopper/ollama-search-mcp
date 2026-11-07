@@ -12,6 +12,7 @@ This MCP server exposes two tools for interacting with Ollama's web services:
 ## Requirements
 
 - Python 3.10+
+- [MCP Python SDK](https://pypi.org/project/mcp/) v2
 - Ollama account (for cloud API access)
 
 ## Installation
@@ -34,13 +35,19 @@ pip install -e .
 uvx runs the server in stdio mode by default (for Claude Desktop/Cursor):
 
 ```bash
-uvx --from https://github.com/akopper/ollama-websearch-mcp ollama-websearch-mcp
+uvx --from git+https://github.com/akopper/ollama-websearch-mcp ollama-websearch-mcp
 ```
 
 For HTTP mode with uvx:
 
 ```bash
-uvx --from https://github.com/akopper/ollama-websearch-mcp ollama-websearch-mcp -- --http
+uvx --from git+https://github.com/akopper/ollama-websearch-mcp ollama-websearch-mcp --http
+```
+
+Pin a release with `@<tag>`:
+
+```bash
+uvx --from 'git+https://github.com/akopper/ollama-websearch-mcp@v0.2.0' ollama-websearch-mcp
 ```
 
 ### Docker
@@ -99,7 +106,12 @@ python -m ollama_websearch_mcp.server
 python -m ollama_websearch_mcp.server --http
 ```
 
-The server will start on `http://localhost:8000/mcp` by default.
+The server will start on `http://localhost:8000/mcp` by default. Use `--host` and
+`--port` to change the bind address, for example inside a container:
+
+```bash
+python -m ollama_websearch_mcp.server --http --host 0.0.0.0 --port 8000
+```
 
 ### Claude Desktop Integration
 
@@ -155,6 +167,33 @@ Add to Cursor settings (or `.cursor/mcp.json` in project):
 }
 ```
 
+### OpenCode Integration
+
+Add the server to your `~/.config/opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "mcp": {
+    "servers": {
+      "ollama-websearch": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "--from",
+          "git+https://github.com/akopper/ollama-websearch-mcp",
+          "ollama-websearch-mcp"
+        ],
+        "environment": {
+          "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}"
+        }
+      }
+    }
+  }
+}
+```
+
+Then run `opencode mcp list` to verify the connection.
+
 ### MCPorter Integration
 
 MCPorter can discover and use this MCP server. Create a config file:
@@ -194,7 +233,8 @@ Perform a web search using Ollama's hosted search API.
 - `query` (required): The search query string
 - `max_results` (optional): Maximum number of results to return (default: 10)
 
-**Returns:** Dictionary containing search results with title, url, and snippet.
+**Returns:** Dictionary with a `results` list, each entry containing `title`, `url`, and
+`content`.
 
 ### web_fetch
 
@@ -203,7 +243,7 @@ Fetch the content of a web page.
 **Parameters:**
 - `url` (required): The absolute URL to fetch
 
-**Returns:** Dictionary containing the fetched content with html, text, and metadata.
+**Returns:** Dictionary containing the page `title`, `content`, and `links`.
 
 ## Development
 

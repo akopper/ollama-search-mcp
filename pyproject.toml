@@ -4,14 +4,14 @@ description = "MCP server for Ollama web search and web fetch APIs"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-version = "0.1.0"
+version = "0.2.0"
 authors = [
     { name = "Alexander Kopper", email = "code@knospi.com" }
 ]
 urls = { Homepage = "https://github.com/akopper/ollama-websearch-mcp", Repository = "https://github.com/akopper/ollama-websearch-mcp" }
 dependencies = [
-    "mcp>=1.0.0",
-    "ollama>=0.3.0",
+    "mcp>=2.0.0,<3",
+    "ollama>=0.6.0",
 ]
 
 [project.optional-dependencies]
@@ -57,5 +57,4 @@ select = [
 ignore = ["FBT001"]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]

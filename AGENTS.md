@@ -105,7 +105,7 @@ def web_search(query: str, max_results: int = 10) -> dict[str, Any]:
 ### Naming Conventions
 
 - **Functions**: snake_case (`get_ollama_client`, `web_search`)
-- **Classes**: PascalCase (`FastMCP`, `MyClass`)
+- **Classes**: PascalCase (`MCPServer`, `MyClass`)
 - **Constants**: UPPER_SNAKE_CASE
 - **Modules**: snake_case
 - **Private functions**: prefix with underscore (`_internal_function`)
@@ -160,7 +160,7 @@ ollama-websearch-mcp/
 
 ### MCP Server Guidelines
 
-- Use `FastMCP` from `mcp.server.fastmcp` for simple stdio servers
+- Use `MCPServer` from `mcp.server.mcpserver` for simple stdio servers (MCP Python SDK v2)
 - Define tools with the `@mcp.tool()` decorator
 - Tools should return JSON-serializable dictionaries
 - Use descriptive docstrings for tools (exposed to LLM clients)
@@ -177,7 +177,7 @@ ollama-websearch-mcp/
 - Keep dependencies minimal
 - Pin minimum versions in `pyproject.toml`
 - Use `ollama` for Ollama API interactions
-- Use `mcp` for MCP server implementation
+- Use `mcp>=2,<3` for the MCP server implementation
 
 ## Common Tasks
 

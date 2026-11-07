@@ -1,5 +1,6 @@
 """Tests for the Ollama web search MCP server."""
 
+import asyncio
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -39,7 +40,7 @@ class TestWebSearch:
                 {
                     "title": "Test Result",
                     "url": "https://example.com",
-                    "snippet": "Test snippet",
+                    "content": "Test snippet",
                 }
             ]
         }
@@ -72,9 +73,9 @@ class TestWebFetch:
 
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {
-            "html": "<html><body>Test</body></html>",
-            "text": "Test",
-            "metadata": {"title": "Test Page"},
+            "title": "Test Page",
+            "content": "Test",
+            "links": ["https://example.com/next"],
         }
         mock_ollama_client.web_fetch.return_value = mock_response
 
@@ -144,3 +145,38 @@ class TestOllamaClient:
             call_kwargs = mock_client.call_args.kwargs
             assert call_kwargs["host"] == "https://ollama.com"
             assert call_kwargs["headers"]["Authorization"] == "Bearer test-api-key"
+
+
+class TestServer:
+    """Tests for the MCP server registration and command line."""
+
+    def test_exposes_web_tools(self):
+        """Test that both tools are registered on the server."""
+        from ollama_websearch_mcp.server import mcp
+
+        tools = asyncio.run(mcp.list_tools())
+
+        assert {tool.name for tool in tools} == {"web_search", "web_fetch"}
+
+    def test_parse_args_defaults(self):
+        """Test that the CLI defaults to stdio on localhost."""
+        from ollama_websearch_mcp.server import _parse_args
+
+        assert _parse_args([]) == ("stdio", "127.0.0.1", 8000)
+
+    def test_parse_args_http(self):
+        """Test that HTTP mode accepts host and port overrides."""
+        from ollama_websearch_mcp.server import _parse_args
+
+        assert _parse_args(["--http", "--host", "0.0.0.0", "--port", "9000"]) == (
+            "streamable-http",
+            "0.0.0.0",
+            9000,
+        )
+
+    def test_parse_args_rejects_unknown(self):
+        """Test that unknown arguments fail fast."""
+        from ollama_websearch_mcp.server import _parse_args
+
+        with pytest.raises(SystemExit):
+            _parse_args(["--nope"])
