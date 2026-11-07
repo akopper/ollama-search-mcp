@@ -11,4 +11,4 @@ ENV OLLAMA_HOST="https://ollama.com"
 
 EXPOSE 8000
 
-CMD ["ollama-websearch-mcp", "--http", "--host", "0.0.0.0"]
+CMD ["ollama-search-mcp", "--http", "--host", "0.0.0.0"]

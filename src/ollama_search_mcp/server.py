@@ -9,9 +9,9 @@ Environment Variables:
 - OLLAMA_HOST (optional): Host URL for Ollama (default: https://ollama.com)
 
 Command line:
-    ollama-websearch-mcp            # stdio transport (default)
-    ollama-websearch-mcp --http     # Streamable HTTP transport
-    ollama-websearch-mcp --sse      # SSE transport
+    ollama-search-mcp               # stdio transport (default)
+    ollama-search-mcp --http        # Streamable HTTP transport
+    ollama-search-mcp --sse         # SSE transport
     --host HOST                     # HTTP bind address (default: 127.0.0.1)
     --port PORT                     # HTTP port (default: 8000)
 """
@@ -25,11 +25,11 @@ from typing import Any, Literal
 from mcp.server.mcpserver import MCPServer
 from ollama import Client
 
-from ollama_websearch_mcp import __version__
+from ollama_search_mcp import __version__
 
 Transport = Literal["stdio", "streamable-http", "sse"]
 
-mcp = MCPServer("ollama-websearch-mcp", version=__version__)
+mcp = MCPServer("ollama-search-mcp", version=__version__)
 
 _ollama_client: Client | None = None
 

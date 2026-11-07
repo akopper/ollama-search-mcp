@@ -9,7 +9,7 @@ import pytest
 @pytest.fixture
 def mock_ollama_client():
     """Create a mock Ollama client."""
-    with patch("ollama_websearch_mcp.server.get_ollama_client") as mock:
+    with patch("ollama_search_mcp.server.get_ollama_client") as mock:
         client = MagicMock()
         mock.return_value = client
         yield client
@@ -21,7 +21,7 @@ def import_server():
     with patch("ollama.Client"):
         import importlib
 
-        import ollama_websearch_mcp.server as server_module
+        import ollama_search_mcp.server as server_module
 
         importlib.reload(server_module)
         return server_module
@@ -32,7 +32,7 @@ class TestWebSearch:
 
     def test_web_search_returns_dict(self, mock_ollama_client):
         """Test that web_search returns a dictionary."""
-        from ollama_websearch_mcp.server import web_search
+        from ollama_search_mcp.server import web_search
 
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {
@@ -53,7 +53,7 @@ class TestWebSearch:
 
     def test_web_search_default_max_results(self, mock_ollama_client):
         """Test that web_search uses default max_results."""
-        from ollama_websearch_mcp.server import web_search
+        from ollama_search_mcp.server import web_search
 
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {"results": []}
@@ -69,7 +69,7 @@ class TestWebFetch:
 
     def test_web_fetch_returns_dict(self, mock_ollama_client):
         """Test that web_fetch returns a dictionary."""
-        from ollama_websearch_mcp.server import web_fetch
+        from ollama_search_mcp.server import web_fetch
 
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {
@@ -93,11 +93,11 @@ class TestOllamaClient:
         import sys
 
         for mod_name in list(sys.modules.keys()):
-            if mod_name.startswith("ollama_websearch_mcp"):
+            if mod_name.startswith("ollama_search_mcp"):
                 del sys.modules[mod_name]
 
         with patch("ollama.Client") as mock_client, patch.dict("os.environ", {}, clear=True):
-            from ollama_websearch_mcp.server import get_ollama_client
+            from ollama_search_mcp.server import get_ollama_client
 
             get_ollama_client()
 
@@ -108,14 +108,14 @@ class TestOllamaClient:
         import sys
 
         for mod_name in list(sys.modules.keys()):
-            if mod_name.startswith("ollama_websearch_mcp"):
+            if mod_name.startswith("ollama_search_mcp"):
                 del sys.modules[mod_name]
 
         with (
             patch("ollama.Client") as mock_client,
             patch.dict("os.environ", {"OLLAMA_HOST": "https://custom.example.com"}),
         ):
-            from ollama_websearch_mcp.server import get_ollama_client
+            from ollama_search_mcp.server import get_ollama_client
 
             get_ollama_client()
 
@@ -126,7 +126,7 @@ class TestOllamaClient:
         import sys
 
         for mod_name in list(sys.modules.keys()):
-            if mod_name.startswith("ollama_websearch_mcp"):
+            if mod_name.startswith("ollama_search_mcp"):
                 del sys.modules[mod_name]
 
         with (
@@ -137,7 +137,7 @@ class TestOllamaClient:
                 clear=False,
             ),
         ):
-            from ollama_websearch_mcp.server import get_ollama_client
+            from ollama_search_mcp.server import get_ollama_client
 
             get_ollama_client()
 
@@ -152,7 +152,7 @@ class TestServer:
 
     def test_exposes_web_tools(self):
         """Test that both tools are registered on the server."""
-        from ollama_websearch_mcp.server import mcp
+        from ollama_search_mcp.server import mcp
 
         tools = asyncio.run(mcp.list_tools())
 
@@ -160,13 +160,13 @@ class TestServer:
 
     def test_parse_args_defaults(self):
         """Test that the CLI defaults to stdio on localhost."""
-        from ollama_websearch_mcp.server import _parse_args
+        from ollama_search_mcp.server import _parse_args
 
         assert _parse_args([]) == ("stdio", "127.0.0.1", 8000)
 
     def test_parse_args_http(self):
         """Test that HTTP mode accepts host and port overrides."""
-        from ollama_websearch_mcp.server import _parse_args
+        from ollama_search_mcp.server import _parse_args
 
         assert _parse_args(["--http", "--host", "0.0.0.0", "--port", "9000"]) == (
             "streamable-http",
@@ -176,7 +176,7 @@ class TestServer:
 
     def test_parse_args_rejects_unknown(self):
         """Test that unknown arguments fail fast."""
-        from ollama_websearch_mcp.server import _parse_args
+        from ollama_search_mcp.server import _parse_args
 
         with pytest.raises(SystemExit):
             _parse_args(["--nope"])

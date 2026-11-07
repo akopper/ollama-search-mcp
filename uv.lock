@@ -527,7 +527,7 @@ wheels = [
 ]
 
 [[package]]
-name = "ollama-websearch-mcp"
+name = "ollama-search-mcp"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [

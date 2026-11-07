@@ -1,6 +1,6 @@
 services:
-  ollama-websearch-mcp:
-    image: ghcr.io/akopper/ollama-websearch-mcp
+  ollama-search-mcp:
+    image: ghcr.io/akopper/ollama-search-mcp
     ports:
       - "8000:8000"
     environment:

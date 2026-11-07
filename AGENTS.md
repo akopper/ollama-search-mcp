@@ -1,4 +1,4 @@
-# Agent Guidelines for ollama-websearch-mcp
+# Agent Guidelines for ollama-search-mcp
 
 ## Project Overview
 
@@ -50,11 +50,11 @@ ruff check src/ tests/ --fix
 
 ```bash
 # stdio mode (default, for Claude Desktop/Cursor)
-python -m ollama_websearch_mcp.server
-ollama-websearch-mcp
+python -m ollama_search_mcp.server
+ollama-search-mcp
 
 # HTTP mode (for remote usage)
-python -m ollama_websearch_mcp.server --http
+python -m ollama_search_mcp.server --http
 ```
 
 ## Code Style Guidelines
@@ -71,7 +71,7 @@ python -m ollama_websearch_mcp.server --http
 - Standard library imports first
 - Third-party imports second
 - Local imports third
-- Use absolute imports for package modules: `from ollama_websearch_mcp.server import ...`
+- Use absolute imports for package modules: `from ollama_search_mcp.server import ...`
 - Sort imports alphabetically within each group
 
 ### Formatting
@@ -144,9 +144,9 @@ class TestWebSearch:
 ### Project Structure
 
 ```
-ollama-websearch-mcp/
+ollama-search-mcp/
 ├── src/
-│   └── ollama_websearch_mcp/
+│   └── ollama_search_mcp/
 │       ├── __init__.py
 │       └── server.py
 ├── tests/
@@ -183,7 +183,7 @@ ollama-websearch-mcp/
 
 ### Adding a New Tool
 
-1. Add the tool function to `src/ollama_websearch_mcp/server.py`
+1. Add the tool function to `src/ollama_search_mcp/server.py`
 2. Decorate with `@mcp.tool()`
 3. Add type hints and docstring
 4. Add tests in `tests/test_server.py`
@@ -198,7 +198,7 @@ ollama-websearch-mcp/
 ### Running MCP Inspector
 
 ```bash
-mcp dev src/ollama_websearch_mcp/server.py
+mcp dev src/ollama_search_mcp/server.py
 ```
 
 This starts the MCP development server for testing tools.
