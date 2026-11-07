@@ -1,13 +1,22 @@
 # Ollama Search MCP Server
 
-MCP server for Ollama web search and web fetch APIs.
+[![Test & Build](https://github.com/akopper/ollama-search-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/akopper/ollama-search-mcp/actions/workflows/test.yml)
+[![PyPI](https://img.shields.io/pypi/v/ollama-search-mcp.svg)](https://pypi.org/project/ollama-search-mcp/)
+[![Python versions](https://img.shields.io/pypi/pyversions/ollama-search-mcp.svg)](https://pypi.org/project/ollama-search-mcp/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+MCP server exposing Ollama's hosted web search and web fetch APIs as tools for any MCP
+client.
 
 ## Overview
 
-This MCP server exposes two tools for interacting with Ollama's web services:
+The server provides two tools:
 
-- **web_search**: Perform a web search using Ollama's hosted search API
-- **web_fetch**: Fetch the content of a web page
+- **web_search**: search the web through Ollama's hosted search API
+- **web_fetch**: fetch a web page and return its content
+
+It works with any MCP client, including Claude Desktop, Cursor, OpenCode, and MCPorter.
+An Ollama account and API key are required for the cloud endpoints.
 
 ## Requirements
 
@@ -17,37 +26,27 @@ This MCP server exposes two tools for interacting with Ollama's web services:
 
 ## Installation
 
-### Clone
+### PyPI
 
 ```bash
-git clone https://github.com/akopper/ollama-search-mcp.git
-cd ollama-search-mcp
+uvx ollama-search-mcp
+# or install the console script
+pip install ollama-search-mcp
 ```
 
-### From Source
+`uvx` runs the server on demand, which is the recommended command for MCP client
+configuration.
 
-```bash
-pip install -e .
-```
-
-### With uvx
-
-uvx runs the server in stdio mode by default (for Claude Desktop/Cursor):
+### From Git
 
 ```bash
 uvx --from git+https://github.com/akopper/ollama-search-mcp ollama-search-mcp
 ```
 
-For HTTP mode with uvx:
-
-```bash
-uvx --from git+https://github.com/akopper/ollama-search-mcp ollama-search-mcp --http
-```
-
 Pin a release with `@<tag>`:
 
 ```bash
-uvx --from 'git+https://github.com/akopper/ollama-search-mcp@v0.2.0' ollama-search-mcp
+uvx --from 'git+https://github.com/akopper/ollama-search-mcp@v0.2.1' ollama-search-mcp
 ```
 
 ### Docker
@@ -70,6 +69,14 @@ cp .env.example .env
 docker-compose up -d
 ```
 
+### From Source
+
+```bash
+git clone https://github.com/akopper/ollama-search-mcp.git
+cd ollama-search-mcp
+pip install -e .
+```
+
 ## Configuration
 
 ### Environment Variables
@@ -86,6 +93,9 @@ docker-compose up -d
 3. Navigate to API settings
 4. Generate an API key
 
+Search queries and fetched URLs are sent to Ollama's cloud service. Do not send
+confidential data in search queries.
+
 ## Usage
 
 ### Running the Server
@@ -95,6 +105,12 @@ docker-compose up -d
 ```bash
 # Using the installed command
 ollama-search-mcp
+
+# Explicit stdio (same as the default)
+ollama-search-mcp --stdio
+
+# Or on demand with uvx
+uvx ollama-search-mcp
 
 # Or directly with Python
 python -m ollama_search_mcp.server
@@ -106,8 +122,8 @@ python -m ollama_search_mcp.server
 python -m ollama_search_mcp.server --http
 ```
 
-The server will start on `http://localhost:8000/mcp` by default. Use `--host` and
-`--port` to change the bind address, for example inside a container:
+The server starts on `http://localhost:8000/mcp` by default. Use `--host` and `--port`
+to change the bind address, for example inside a container:
 
 ```bash
 python -m ollama_search_mcp.server --http --host 0.0.0.0 --port 8000
@@ -125,7 +141,8 @@ Add the following to your Claude Desktop configuration:
 {
   "mcpServers": {
     "ollama-search": {
-      "command": "ollama-search-mcp",
+      "command": "uvx",
+      "args": ["ollama-search-mcp"],
       "env": {
         "OLLAMA_API_KEY": "your-api-key-here"
       }
@@ -134,31 +151,18 @@ Add the following to your Claude Desktop configuration:
 }
 ```
 
-Or with a custom Python environment:
-
-```json
-{
-  "mcpServers": {
-    "ollama-search": {
-      "command": "/path/to/venv/bin/python",
-      "args": ["-m", "ollama_search_mcp.server"],
-      "env": {
-        "OLLAMA_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
-```
+A globally installed `ollama-search-mcp` console script also works as `command`.
 
 ### Cursor Integration
 
-Add to Cursor settings (or `.cursor/mcp.json` in project):
+Add to Cursor settings (or `.cursor/mcp.json` in the project):
 
 ```json
 {
   "mcpServers": {
     "ollama-search": {
-      "command": "ollama-search-mcp",
+      "command": "uvx",
+      "args": ["ollama-search-mcp"],
       "env": {
         "OLLAMA_API_KEY": "your-api-key-here"
       }
@@ -177,12 +181,7 @@ Add the server to your `~/.config/opencode/opencode.jsonc`:
     "servers": {
       "ollama-search": {
         "type": "local",
-        "command": [
-          "uvx",
-          "--from",
-          "git+https://github.com/akopper/ollama-search-mcp",
-          "ollama-search-mcp"
-        ],
+        "command": ["uvx", "ollama-search-mcp"],
         "environment": {
           "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}"
         }
@@ -196,15 +195,15 @@ Then run `opencode mcp list` to verify the connection.
 
 ### MCPorter Integration
 
-MCPorter can discover and use this MCP server. Create a config file:
+MCPorter can discover and use this server. Example `config/mcporter.json`:
 
 ```json
-// config/mcporter.json
 {
   "mcpServers": {
     "ollama-search": {
       "description": "Ollama web search and web fetch MCP server",
-      "command": "ollama-search-mcp",
+      "command": "uvx",
+      "args": ["ollama-search-mcp"],
       "env": {
         "OLLAMA_API_KEY": "$env:OLLAMA_API_KEY"
       }
@@ -227,35 +226,35 @@ npx mcporter call ollama-search.web_search query:python max_results:10
 
 ### web_search
 
-Perform a web search using Ollama's hosted search API.
+Search the web through Ollama's hosted search API.
 
 **Parameters:**
-- `query` (required): The search query string
-- `max_results` (optional): Maximum number of results to return (default: 10)
+- `query` (required): the search query
+- `max_results` (optional): maximum number of results (default: 10)
 
-**Returns:** Dictionary with a `results` list, each entry containing `title`, `url`, and
+**Returns:** a dictionary with a `results` list; each entry contains `title`, `url`, and
 `content`.
 
 ### web_fetch
 
-Fetch the content of a web page.
+Fetch a single web page.
 
 **Parameters:**
-- `url` (required): The absolute URL to fetch
+- `url` (required): the absolute URL to fetch
 
-**Returns:** Dictionary containing the page `title`, `content`, and `links`.
+**Returns:** a dictionary containing the page `title`, `content`, and `links`.
 
 ## Development
 
 ### Setup
 
 ```bash
-# Create virtual environment
 python -m venv .venv
 source .venv/bin/activate
-
-# Install with dev dependencies
 pip install -e ".[dev]"
+
+# Or with uv
+uv sync --extra dev
 ```
 
 ### Running Tests
@@ -264,24 +263,25 @@ pip install -e ".[dev]"
 # Run all tests
 pytest
 
+# Run with coverage
+pytest --cov --cov-report=term-missing
+
 # Run a single test
 pytest tests/test_server.py::TestWebSearch::test_web_search_returns_dict
-
-# Run with verbose output
-pytest -v
-
-# Run with coverage
-pytest --cov=src --cov-report=html
 ```
 
-### Linting
+### Linting and Formatting
 
 ```bash
-# Check code style
 ruff check src/ tests/
+ruff format --check src/ tests/
+```
 
-# Auto-fix issues
-ruff check src/ tests/ --fix
+### Building Distributions
+
+```bash
+python -m build
+python -m twine check dist/*
 ```
 
 ### Running the Server for Development
@@ -294,6 +294,10 @@ mcp dev src/ollama_search_mcp/server.py
 python -m ollama_search_mcp.server
 ```
 
+## Releasing
+
+See [RELEASING.md](RELEASING.md) for versioning, tagging, and PyPI trusted publishing.
+
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

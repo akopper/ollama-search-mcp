@@ -90,7 +90,7 @@ When the user requests a durable behavior change, record it here or in the relev
 - It works with any MCP client, including Claude Desktop, Cursor, OpenCode, and MCPorter.
 - Runtime: Python 3.10+, MCP Python SDK v2 (`mcp>=2,<3`), `ollama>=0.6.0`.
 - Distributed as `ollama-search-mcp`; the Python package is `ollama_search_mcp`; the console script is `ollama-search-mcp`.
-- Transports: stdio (default), Streamable HTTP (`--http`, default `127.0.0.1:8000/mcp`), SSE (`--sse`).
+- Transports: stdio (default, also `--stdio`), Streamable HTTP (`--http`, default `127.0.0.1:8000/mcp`), SSE (`--sse`).
 - Configuration: `OLLAMA_API_KEY` (optional Bearer token) and `OLLAMA_HOST` (default `https://ollama.com`).
 - The version must stay in sync between `pyproject.toml` and `src/ollama_search_mcp/__init__.py`.
 
@@ -100,10 +100,12 @@ When the user requests a durable behavior change, record it here or in the relev
 ollama-search-mcp/
 ├── src/ollama_search_mcp/   # server implementation
 ├── tests/                   # pytest suite
-├── .github/workflows/       # CI and GHCR publishing
+├── .github/workflows/       # CI, release, and GHCR publishing
 ├── config/mcporter.json     # MCPorter example config
-├── Dockerfile               # container image (HTTP mode)
+├── Dockerfile               # container image (HTTP by default)
 ├── docker-compose.yml
+├── CHANGELOG.md
+├── RELEASING.md
 └── pyproject.toml
 ```
 
@@ -119,12 +121,17 @@ pip install -e ".[dev]"
 uv sync --extra dev
 
 # Verification
-pytest
+pytest --cov --cov-report=term-missing
 ruff check src/ tests/
 ruff format --check src/ tests/
 
+# Build the distributions
+python -m build
+python -m twine check dist/*
+
 # Run
 python -m ollama_search_mcp.server            # stdio
+python -m ollama_search_mcp.server --stdio    # stdio (explicit)
 python -m ollama_search_mcp.server --http     # Streamable HTTP
 python -m ollama_search_mcp.server --sse      # SSE
 ```
@@ -157,9 +164,12 @@ python -m ollama_search_mcp.server --sse      # SSE
 
 ### Release
 
-1. Merge to `main` only after CI is green.
-2. Tag the release as `vX.Y.Z` and push the tag.
-3. Pushes to `main` publish `ghcr.io/<repository>:latest`.
+1. Follow the version, changelog, and tagging steps in `RELEASING.md`.
+2. Merge to `main` only after CI is green.
+3. Tag the release as `vX.Y.Z`; the GitHub release event publishes to PyPI through
+   trusted publishing.
+4. Pushes to `main` publish `ghcr.io/<repository>:latest`; version tags add `X.Y.Z` and
+   `X.Y` image tags.
 
 ## Child DOX Index
 

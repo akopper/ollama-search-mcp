@@ -174,6 +174,12 @@ class TestServer:
             9000,
         )
 
+    def test_parse_args_stdio(self):
+        """Test that stdio can be requested explicitly."""
+        from ollama_search_mcp.server import _parse_args
+
+        assert _parse_args(["--stdio"]) == ("stdio", "127.0.0.1", 8000)
+
     def test_parse_args_rejects_unknown(self):
         """Test that unknown arguments fail fast."""
         from ollama_search_mcp.server import _parse_args
