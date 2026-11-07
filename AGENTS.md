@@ -1,204 +1,168 @@
 # Agent Guidelines for ollama-search-mcp
 
+This project uses the DOX AGENTS.md hierarchy. Read this file and every child AGENTS.md on the
+path to the files you touch before editing.
+
+# DOX framework
+
+- DOX is highly performant AGENTS.md hierarchy installed here
+- Agent must follow DOX instructions across any edits
+
+## Core Contract
+
+- AGENTS.md files are binding work contracts for their subtrees
+- Work products, source materials, instructions, records, assets, and durable docs must stay understandable from the nearest applicable AGENTS.md plus every parent AGENTS.md above it
+
+## Read Before Editing
+
+1. Read the root AGENTS.md
+2. Identify every file or folder you expect to touch
+3. Walk from the repository root to each target path
+4. Read every AGENTS.md found along each route
+5. If a parent AGENTS.md lists a child AGENTS.md whose scope contains the path, read that child and continue from there
+6. Use the nearest AGENTS.md as the local contract and parent docs for repo-wide rules
+7. If docs conflict, the closer doc controls local work details, but no child doc may weaken DOX
+
+Do not rely on memory. Re-read the applicable DOX chain in the current session before editing.
+
+## Update After Editing
+
+Every meaningful change requires a DOX pass before the task is done.
+
+Update the closest owning AGENTS.md when a change affects:
+
+- purpose, scope, ownership, or responsibilities
+- durable structure, contracts, workflows, or operating rules
+- required inputs, outputs, permissions, constraints, side effects, or artifacts
+- user preferences about behavior, communication, process, organization, or quality
+- AGENTS.md creation, deletion, move, rename, or index contents
+
+Update parent docs when parent-level structure, ownership, workflow, or child index changes. Update child docs when parent changes alter local rules. Remove stale or contradictory text immediately. Small edits that do not change behavior or contracts may leave docs unchanged, but the DOX pass still must happen.
+
+## Hierarchy
+
+- Root AGENTS.md is the DOX rail: project-wide instructions, global preferences, durable workflow rules, and the top-level Child DOX Index
+- Child AGENTS.md files own domain-specific instructions and their own Child DOX Index
+- Each parent explains what its direct children cover and what stays owned by the parent
+- The closer a doc is to the work, the more specific and practical it must be
+
+## Child Doc Shape
+
+- Create a child AGENTS.md when a folder becomes a durable boundary with its own purpose, rules, responsibilities, workflow, materials, or quality standards
+- Work Guidance must reflect the current standards of the project or user instructions; if there are no specific standards or instructions yet, leave it empty
+- Verification must reflect an existing check; if no verification framework exists yet, leave it empty and update it when one exists
+
+Default section order:
+
+- Purpose
+- Ownership
+- Local Contracts
+- Work Guidance
+- Verification
+- Child DOX Index
+
+## Style
+
+- Keep docs concise, current, and operational
+- Document stable contracts, not diary entries
+- Put broad rules in parent docs and concrete details in child docs
+- Prefer direct bullets with explicit names
+- Do not duplicate rules across many files unless each scope needs a local version
+- Delete stale notes instead of explaining history
+- Trim obvious statements, repeated rules, misplaced detail, and warnings for risks that no longer exist
+
+## Closeout
+
+1. Re-check changed paths against the DOX chain
+2. Update nearest owning docs and any affected parents or children
+3. Refresh every affected Child DOX Index
+4. Remove stale or contradictory text
+5. Run existing verification when relevant
+6. Report any docs intentionally left unchanged and why
+
+## User Preferences
+
+When the user requests a durable behavior change, record it here or in the relevant child AGENTS.md
+
 ## Project Overview
 
-This is an MCP (Model Context Protocol) server that exposes Ollama's web search and web fetch APIs as tools for AI assistants like Claude, Cursor, and other MCP clients.
+- `ollama-search-mcp` is an MCP (Model Context Protocol) server that exposes Ollama's hosted `web_search` and `web_fetch` APIs as tools.
+- It works with any MCP client, including Claude Desktop, Cursor, OpenCode, and MCPorter.
+- Runtime: Python 3.10+, MCP Python SDK v2 (`mcp>=2,<3`), `ollama>=0.6.0`.
+- Distributed as `ollama-search-mcp`; the Python package is `ollama_search_mcp`; the console script is `ollama-search-mcp`.
+- Transports: stdio (default), Streamable HTTP (`--http`, default `127.0.0.1:8000/mcp`), SSE (`--sse`).
+- Configuration: `OLLAMA_API_KEY` (optional Bearer token) and `OLLAMA_HOST` (default `https://ollama.com`).
+- The version must stay in sync between `pyproject.toml` and `src/ollama_search_mcp/__init__.py`.
 
-## Build / Test Commands
+## Repository Layout
 
-### Setup
-
-```bash
-# Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-
-# Install with dev dependencies
-pip install -e ".[dev]"
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run a single test file
-pytest tests/test_server.py
-
-# Run a single test
-pytest tests/test_server.py::TestWebSearch::test_web_search_returns_dict
-
-# Run with verbose output
-pytest -v
-
-# Run with coverage
-pytest --cov=src --cov-report=html
-```
-
-### Linting
-
-```bash
-# Check code style
-ruff check src/ tests/
-
-# Auto-fix issues
-ruff check src/ tests/ --fix
-```
-
-### Running the Server
-
-```bash
-# stdio mode (default, for Claude Desktop/Cursor)
-python -m ollama_search_mcp.server
-ollama-search-mcp
-
-# HTTP mode (for remote usage)
-python -m ollama_search_mcp.server --http
-```
-
-## Code Style Guidelines
-
-### General
-
-- **Language**: Python 3.10+
-- **Linter**: ruff
-- **Formatter**: ruff (using default settings)
-- **Testing**: pytest
-
-### Import Conventions
-
-- Standard library imports first
-- Third-party imports second
-- Local imports third
-- Use absolute imports for package modules: `from ollama_search_mcp.server import ...`
-- Sort imports alphabetically within each group
-
-### Formatting
-
-- Line length: 100 characters
-- Indent: 4 spaces
-- Quotes: double quotes (`"`) for strings
-- Use trailing commas for multi-line collections
-
-### Type Hints
-
-- Use type hints for all function parameters and return types
-- Use `dict[str, Any]` for dictionary returns that are not statically typed
-- Import types from `typing` module when needed (e.g., `Optional`, `List`)
-
-Example:
-```python
-def web_search(query: str, max_results: int = 10) -> dict[str, Any]:
-    """Perform a web search using Ollama's hosted search API.
-
-    Args:
-        query: The search query to run.
-        max_results: Maximum number of results to return (default: 10).
-
-    Returns:
-        A dictionary containing search results with title, url, and snippet.
-    """
-    ...
-```
-
-### Naming Conventions
-
-- **Functions**: snake_case (`get_ollama_client`, `web_search`)
-- **Classes**: PascalCase (`MCPServer`, `MyClass`)
-- **Constants**: UPPER_SNAKE_CASE
-- **Modules**: snake_case
-- **Private functions**: prefix with underscore (`_internal_function`)
-
-### Docstrings
-
-- Use Google-style docstrings
-- Include Args, Returns, and Raises sections for functions
-- Keep the first line concise (under 79 characters)
-- Add description for complex functions
-
-### Error Handling
-
-- Let exceptions propagate for unexpected errors
-- Use descriptive error messages
-- Handle expected error cases gracefully
-
-### Testing
-
-- Use pytest as the testing framework
-- Use `unittest.mock` for mocking
-- Name test files: `test_*.py`
-- Test class names: `Test*`
-- Test method names: `test_*`
-
-Example test structure:
-```python
-class TestWebSearch:
-    """Tests for the web_search tool."""
-
-    def test_web_search_returns_dict(self, mock_ollama_client):
-        """Test that web_search returns a dictionary."""
-        ...
-```
-
-### Project Structure
-
-```
+```text
 ollama-search-mcp/
-├── src/
-│   └── ollama_search_mcp/
-│       ├── __init__.py
-│       └── server.py
-├── tests/
-│   ├── __init__.py
-│   └── test_server.py
-├── pyproject.toml
-├── README.md
-├── AGENTS.md
-└── .env.example
+├── src/ollama_search_mcp/   # server implementation
+├── tests/                   # pytest suite
+├── .github/workflows/       # CI and GHCR publishing
+├── config/mcporter.json     # MCPorter example config
+├── Dockerfile               # container image (HTTP mode)
+├── docker-compose.yml
+└── pyproject.toml
 ```
 
-### MCP Server Guidelines
-
-- Use `MCPServer` from `mcp.server.mcpserver` for simple stdio servers (MCP Python SDK v2)
-- Define tools with the `@mcp.tool()` decorator
-- Tools should return JSON-serializable dictionaries
-- Use descriptive docstrings for tools (exposed to LLM clients)
-- Support both stdio and HTTP transports
-
-### Environment Variables
-
-- Use `os.environ.get()` to read environment variables
-- Provide sensible defaults
-- Document all environment variables in docstrings
-
-### Dependencies
-
-- Keep dependencies minimal
-- Pin minimum versions in `pyproject.toml`
-- Use `ollama` for Ollama API interactions
-- Use `mcp>=2,<3` for the MCP server implementation
-
-## Common Tasks
-
-### Adding a New Tool
-
-1. Add the tool function to `src/ollama_search_mcp/server.py`
-2. Decorate with `@mcp.tool()`
-3. Add type hints and docstring
-4. Add tests in `tests/test_server.py`
-5. Run tests to verify
-
-### Updating Dependencies
-
-1. Edit `dependencies` or `project.optional-dependencies` in `pyproject.toml`
-2. Run `pip install -e ".[dev]"` to update
-3. Run tests to ensure everything still works
-
-### Running MCP Inspector
+## Setup And Commands
 
 ```bash
-mcp dev src/ollama_search_mcp/server.py
+# Setup (pip, as used by CI)
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+# Alternative (uses uv.lock)
+uv sync --extra dev
+
+# Verification
+pytest
+ruff check src/ tests/
+ruff format --check src/ tests/
+
+# Run
+python -m ollama_search_mcp.server            # stdio
+python -m ollama_search_mcp.server --http     # Streamable HTTP
+python -m ollama_search_mcp.server --sse      # SSE
 ```
 
-This starts the MCP development server for testing tools.
+## Global Code Rules
+
+- Use type hints for every parameter and return value; use `dict[str, Any]` for loosely typed dictionaries.
+- ruff: line length 100, 4-space indent, double quotes, trailing commas in multi-line collections.
+- Import order: standard library, third-party, local; use absolute imports from `ollama_search_mcp`.
+- Naming: `snake_case` functions and modules, `PascalCase` classes, `UPPER_SNAKE_CASE` constants, `_private` helpers.
+- Docstrings: Google style with Args/Returns/Raises; keep the first line under 79 characters.
+- Let unexpected exceptions propagate; give expected failures descriptive messages.
+- Keep dependencies minimal and pin minimum versions in `pyproject.toml`.
+
+## Cross-Cutting Workflows
+
+### Add or change a tool
+
+1. Change the tool in `src/ollama_search_mcp/server.py`.
+2. Add or update tests in `tests/`.
+3. Run pytest, ruff check, and ruff format check.
+4. Update the README tool docs if the public contract changed.
+
+### Change dependencies or versions
+
+1. Edit `pyproject.toml`.
+2. Refresh the lockfile with `uv lock` and reinstall.
+3. Keep `__version__` in `src/ollama_search_mcp/__init__.py` aligned with the project version.
+4. Run the full test and lint suite.
+
+### Release
+
+1. Merge to `main` only after CI is green.
+2. Tag the release as `vX.Y.Z` and push the tag.
+3. Pushes to `main` publish `ghcr.io/<repository>:latest`.
+
+## Child DOX Index
+
+- [src/ollama_search_mcp/AGENTS.md](src/ollama_search_mcp/AGENTS.md) — server implementation, tools, client, transports, and CLI.
+- [tests/AGENTS.md](tests/AGENTS.md) — pytest suite, fixtures, and verification.
+- [.github/AGENTS.md](.github/AGENTS.md) — CI test job and GHCR image publishing.
