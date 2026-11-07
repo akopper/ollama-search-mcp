@@ -101,6 +101,7 @@ ollama-search-mcp/
 ├── src/ollama_search_mcp/   # server implementation
 ├── tests/                   # pytest suite
 ├── .github/workflows/       # CI, release, and GHCR publishing
+├── .opencode/skills/        # OpenCode skill for using the MCP tools
 ├── config/mcporter.json     # MCPorter example config
 ├── Dockerfile               # container image (HTTP by default)
 ├── docker-compose.yml
@@ -153,7 +154,8 @@ python -m ollama_search_mcp.server --sse      # SSE
 1. Change the tool in `src/ollama_search_mcp/server.py`.
 2. Add or update tests in `tests/`.
 3. Run pytest, ruff check, and ruff format check.
-4. Update the README tool docs if the public contract changed.
+4. Update the README tool docs and the OpenCode skill
+   (`.opencode/skills/ollamawebsearch/SKILL.md`) if the public contract changed.
 
 ### Change dependencies or versions
 

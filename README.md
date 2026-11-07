@@ -193,6 +193,36 @@ Add the server to your `~/.config/opencode/opencode.jsonc`:
 
 Then run `opencode mcp list` to verify the connection.
 
+### OpenCode Skill
+
+The repository ships an OpenCode skill that teaches the agent how to call the
+server's tools. It lives at `.opencode/skills/ollamawebsearch/SKILL.md`.
+
+Install it globally so it is available in every OpenCode project:
+
+```bash
+mkdir -p ~/.config/opencode/skills/ollamawebsearch
+cp .opencode/skills/ollamawebsearch/SKILL.md \
+  ~/.config/opencode/skills/ollamawebsearch/SKILL.md
+```
+
+To keep the installed skill in sync with this repository, link it instead:
+
+```bash
+mkdir -p ~/.config/opencode/skills
+ln -s "$PWD/.opencode/skills/ollamawebsearch" \
+  ~/.config/opencode/skills/ollamawebsearch
+```
+
+For a single project, copy the directory to
+`<project>/.opencode/skills/ollamawebsearch/`. OpenCode also discovers skills
+in `~/.claude/skills` and `~/.agents/skills`.
+
+The skill is registered as `ollamawebsearch`; load it with `@ollamawebsearch`
+or the `skill` tool. OpenCode reloads skills automatically, so no restart is
+required. When working inside this repository, OpenCode already discovers the
+skill from `.opencode/skills`.
+
 ### MCPorter Integration
 
 MCPorter can discover and use this server. Example `config/mcporter.json`:
