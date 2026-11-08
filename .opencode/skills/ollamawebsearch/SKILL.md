@@ -70,3 +70,11 @@ with a server prefix – use the names from the session's tool list.
 - No results: rephrase the query or try English terms.
 - `web_fetch` fails: check the absolute or canonical URL, otherwise use the
   search snippet.
+- The server does not show up in the tool list and the log says
+  `mcp connect failed … NotFound: ChildProcess.spawn (uvx …)`: the `PATH` of
+  the OpenCode process lacks `~/.local/bin`. Desktop launches skip `~/.bashrc`,
+  so use the absolute path to `uvx` in the MCP config.
+- `web_search` returns `Error executing tool web_search` and the log says
+  `Authorization header with Bearer token is required for web search`:
+  `OLLAMA_API_KEY` was empty. Set it literally in the MCP config, or export it
+  in the environment that launches OpenCode.

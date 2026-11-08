@@ -191,7 +191,35 @@ Add the server to your `~/.config/opencode/opencode.jsonc`:
 }
 ```
 
-Then run `opencode mcp list` to verify the connection.
+Then run `opencode mcp list` to verify the connection; it should report
+`✓ ollama-search connected`.
+
+If OpenCode is started from a desktop session instead of a login shell, it
+usually does not inherit `~/.bashrc`. Two things then break: `~/.local/bin` is
+missing from `PATH` (so `uvx` cannot be spawned) and exported variables like
+`OLLAMA_API_KEY` are unset (so `{env:OLLAMA_API_KEY}` becomes an empty string).
+In that case use an absolute command path and a literal key:
+
+```jsonc
+{
+  "mcp": {
+    "servers": {
+      "ollama-search": {
+        "type": "local",
+        "command": ["/home/you/.local/bin/uvx", "ollama-search-mcp"],
+        "environment": {
+          "OLLAMA_API_KEY": "your-api-key-here"
+        }
+      }
+    }
+  }
+}
+```
+
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| `mcp connect failed … NotFound: ChildProcess.spawn (uvx ollama-search-mcp)` | `uvx` is not on the `PATH` OpenCode inherited | use the absolute `uvx` path as shown above |
+| Tools work but `web_search` returns `Error executing tool web_search`, log says `Authorization header with Bearer token is required for web search` | `OLLAMA_API_KEY` was substituted with an empty string | set the key literally in the MCP config, or export it in the environment that starts OpenCode |
 
 ### OpenCode Skill
 

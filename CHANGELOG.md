@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Troubleshooting notes for the OpenCode integration: desktop launches do not
+  inherit `~/.bashrc`, which breaks `uvx` discovery and `{env:OLLAMA_API_KEY}`
+
 ## [0.2.1] - 2026-11-07
 
 ### Added
