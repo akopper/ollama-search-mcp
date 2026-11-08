@@ -198,7 +198,13 @@ If OpenCode is started from a desktop session instead of a login shell, it
 usually does not inherit `~/.bashrc`. Two things then break: `~/.local/bin` is
 missing from `PATH` (so `uvx` cannot be spawned) and exported variables like
 `OLLAMA_API_KEY` are unset (so `{env:OLLAMA_API_KEY}` becomes an empty string).
-In that case use an absolute command path and a literal key:
+In that case use an absolute command path and read the key from a file:
+
+```bash
+mkdir -p ~/.config/opencode/secrets
+printf '%s' 'your-api-key-here' > ~/.config/opencode/secrets/ollama-search.key
+chmod 600 ~/.config/opencode/secrets/ollama-search.key
+```
 
 ```jsonc
 {
@@ -208,7 +214,7 @@ In that case use an absolute command path and a literal key:
         "type": "local",
         "command": ["/home/you/.local/bin/uvx", "ollama-search-mcp"],
         "environment": {
-          "OLLAMA_API_KEY": "your-api-key-here"
+          "OLLAMA_API_KEY": "{file:./secrets/ollama-search.key}"
         }
       }
     }
@@ -216,10 +222,16 @@ In that case use an absolute command path and a literal key:
 }
 ```
 
+`{file:…}` paths are resolved relative to the config file, and `~/` is
+expanded, so `{file:~/.config/opencode/secrets/ollama-search.key}` works as
+well. Keep the file free of a trailing newline, otherwise it becomes part of
+the header value. If your OpenCode version does not support `{file:…}` yet,
+put the key into `environment` literally instead.
+
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | `mcp connect failed … NotFound: ChildProcess.spawn (uvx ollama-search-mcp)` | `uvx` is not on the `PATH` OpenCode inherited | use the absolute `uvx` path as shown above |
-| Tools work but `web_search` returns `Error executing tool web_search`, log says `Authorization header with Bearer token is required for web search` | `OLLAMA_API_KEY` was substituted with an empty string | set the key literally in the MCP config, or export it in the environment that starts OpenCode |
+| Tools work but `web_search` returns `Error executing tool web_search`, log says `Authorization header with Bearer token is required for web search` | `OLLAMA_API_KEY` was substituted with an empty string | read it from a file as shown above, set it literally, or export it in the environment that starts OpenCode |
 
 ### OpenCode Skill
 
