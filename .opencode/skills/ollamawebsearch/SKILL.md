@@ -1,5 +1,5 @@
 ---
-name: Ollama Web Search
+name: ollamawebsearch
 description: Web search and page fetching via the ollama-search MCP (web_search/web_fetch) – for current information, research, documentation, and source verification.
 ---
 
