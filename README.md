@@ -1,9 +1,11 @@
 # Ollama Search MCP Server
 
+[![Release](https://github.com/akopper/ollama-search-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/akopper/ollama-search-mcp/actions/workflows/release.yml)
 [![Test & Build](https://github.com/akopper/ollama-search-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/akopper/ollama-search-mcp/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/ollama-search-mcp.svg)](https://pypi.org/project/ollama-search-mcp/)
 [![Python versions](https://img.shields.io/pypi/pyversions/ollama-search-mcp.svg)](https://pypi.org/project/ollama-search-mcp/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 
 MCP server exposing Ollama's hosted web search and web fetch APIs as tools for any MCP
 client.
